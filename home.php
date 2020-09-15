@@ -3,17 +3,21 @@ $username = "Alex Nelke";
 $fulltimenow = date("d.m.Y H:i:s");
 $hournow = date("H");
 $partofday = "lihtsalt aeg";
-if($hournow < 7){
+
+if($hournow < 6){
+	$partofday = "magamine";
+}
+if($hournow >= 6 and $hournow < 9){
 	$partofday = "ärkamine";
 }
-if($hournow >= 8 and $hournow < 18) {
+if($hournow >= 9 and $hournow < 17){
 	$partofday = "kooliaeg";
 }
-if($hournow > 18 and $hournow < 22) {
+if($hournow >= 17 and $hournow < 22){
 	$partofday = "vabaaeg";
 }
-if($hournow > 22 and $hournow <= 7) {
-	$partofday = "öörahu";
+if($hournow >= 22){
+	$partofday = "päeva lõpp";
 }
 
 //vaatame semestri kulgemist
@@ -23,10 +27,12 @@ $semesterend = new DateTime("2020-12-13");
 $semesterduration = $semesterstart->diff($semesterend);
 //leiame päevade arvuna
 $semesterdurationdays = $semesterduration->format("%r%a");
-
 //tänane päev 
 $today = new DateTime("now");
 //if($fromsemesterstartdays < 0) (semester pole peale hakanud)
+$fromsemesterstart = $semesterstart->diff($today);
+$fromsemesterstartdays = $fromsemesterstart->format("%r%a");
+$semesterpercent = $fromsemesterstartdays * 100 / $semesterdurationdays;
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +47,9 @@ $today = new DateTime("now");
 <body>
   <h1><?php echo $username; ?> </h1>
   <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
-  <p>Lehe avamisel oli aeg: <?php echo $fulltimenow ?> <p>
+  <p>Lehe avamisel oli aeg: <?php echo $fulltimenow ?> </p>
   <p><?php echo "praegu on " . $partofday . "."; ?></p>
+  <p><?php echo "semestri algusest on " . $fromsemesterstartdays . " päeva möödas, ehk on läbitud " . $semesterpercent . "% semestrist"; ?></p>
 
 </body>
 
