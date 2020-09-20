@@ -1,42 +1,15 @@
 <?php
 
-//var_dump($_POST);
-require("../../../config.php");
-$database = "if20_alex_nel_1";
-if(isset($_POST["ideasubmit"]) and !empty($_POST["ideainput"])){
-	//loome andmebaasiga ühenduse
-	 $conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
-	 //valmistan ette sql käsu andmete kirjutamiseks
-	 $stmt = $conn->prepare("INSERT INTO Myideas (idea) VALUES(?)");
-	 echo $conn->error;
-	 //i-integer täisarv, d-decimal komaarv, s-string sõna
-	 $stmt->bind_param("s", $_POST["ideainput"]);
-	 $stmt->execute();
-	 $stmt->close();
-	 $conn->close();
-}
-
-//loen andmebaasist senised mõtted
-$ideahtml = "";
-$conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
-$stmt = $conn->prepare("SELECT idea FROM Myideas");
-//seon tulemuse muutujaga
-$stmt->bind_result($ideafromdb);
-$stmt->execute();
-while($stmt->fetch()){
-	$ideahtml .= "<p>" .$ideafromdb ."</p>";
-}
-$stmt->close();
-$conn->close();
-
 $username = "Alex Nelke";
-$fulltimenow = date("d.m.Y H:i:s");
+$fulltimenow = date("d.F.Y H:i:s");
 $hournow = date("H");
 $partofday = "lihtsalt aeg";
 $weekdaynameset = ["esmaspäev", "teisipäev", "kolmapäev", "neljapäev", "reede", "laupäev", "pühapäev"];
 $monthnameset = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"];
 //echo $weekdaynameset[1];
 $weekdaynow = date("N");
+//vb on vaja alumist?
+$monthdaynow = date("F");
 
 if($hournow < 6){
 	$partofday = "magamine";
@@ -73,6 +46,7 @@ $allfiles = scandir("../vp_pics/");
 $picfiles = array_slice($allfiles, 2);
 $imghtml = "";
 $piccount = count($picfiles);
+$picnum = mt_rand(0, ($piccount - 1));
 //$i = $1 + 1;
 //$i ++;
 for($i = 0;$i < $piccount; $i ++){
@@ -84,24 +58,16 @@ require("header.php");
 
   <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
   <h1><?php echo $username; ?> </h1>
+  <hr>
   <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
-  <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow ?> </p>
+  <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>
   <p><?php echo "praegu on " .$partofday ."."; ?></p>
   <p><?php echo "semestri algusest on " .$fromsemesterstartdays ." päeva möödas, ehk on läbitud " .$semesterpercent ."% semestrist"; ?></p>
+  <p><a href="motted.php">sisesta oma mõtteid</a></p>
+  <p><a href="motted2.php">vaata teiste mõtteid</a></p>
   <hr>
-  <?php echo $imghtml; ?>
+  <?php echo $imghtml;?>
   <hr>
-  <form method="POST">
-	<label>kirjutage oma mõtteid</label>
-	<input type="text" name="ideainput" placeholder="mõttekoht">
-	<input type="submit" name="ideasubmit" value="saada mõte teele">
-  </form>
-  <hr>
-  <?php echo $ideahtml; ?>
 </body>
 
-<footer>
-<img src="https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_960_720.png" alt="maja">
-
-</footer>
 </html>
