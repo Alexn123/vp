@@ -49,9 +49,9 @@ $piccount = count($picfiles);
 $picnum = mt_rand(0, ($piccount - 1));
 //$i = $1 + 1;
 //$i ++;
-for($i = 0;$i < $piccount; $i ++){
-	$imghtml .= '<img src="../vp_pics/' .$picfiles[$i] .'" alt="tlü">';
-}
+//for($i = 0;$i < $piccount; $i ++){}
+$imghtml .= '<img src="../vp_pics/' .$picfiles[$picnum] .'" alt="tlü">';
+
 require("header.php");
 ?>
 
@@ -63,8 +63,12 @@ require("header.php");
   <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>
   <p><?php echo "praegu on " .$partofday ."."; ?></p>
   <p><?php echo "semestri algusest on " .$fromsemesterstartdays ." päeva möödas, ehk on läbitud " .$semesterpercent ."% semestrist"; ?></p>
-  <p><a href="motted.php">sisesta oma mõtteid</a></p>
-  <p><a href="motted2.php">vaata teiste mõtteid</a></p>
+  <ul>
+  <li><a href="motted.php">sisesta oma mõtteid</a></li>
+  <li><a href="motted2.php">vaata teiste mõtteid</a></li>
+  <li><a href="listfilms.php">filmide nimekiri</a></li>
+  <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
+  </ul>
   <hr>
   <?php echo $imghtml;?>
   <hr>

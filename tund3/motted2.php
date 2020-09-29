@@ -1,4 +1,5 @@
 <?php
+$username = "Alex Nelke";
 //var_dump($_POST);
 require("../../../config.php");
 $database = "if20_alex_nel_1";
@@ -27,9 +28,14 @@ while($stmt->fetch()){
 }
 $stmt->close();
 $conn->close();
-
+require("header.php");
 ?>
 
+  <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
+  <h1><?php echo $username; ?> </h1>
+  <hr>
   <a href="home.php">tagasi kodulehele</a>
   <hr>
   <?php echo $ideahtml; ?>
+</body>
+</html>
