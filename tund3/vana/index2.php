@@ -54,20 +54,19 @@ $imghtml .= '<img src="../vp_pics/' .$picfiles[$picnum] .'" alt="tlü">';
 
 require("header.php");
 ?>
-
-
   <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
-  <h1><?php echo $username; ?> </h1>
-  <li><a href="motted.php">sisesta oma mõtteid</a></li>
-  <li><a href="motted2.php">vaata teiste mõtteid</a></li>
-  <li><a href="listfilms.php">filmide nimekiri</a></li>
-  <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
-  </ul>
   <hr>
+  <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>
   <p><?php echo "praegu on " .$partofday ."."; ?></p>
   <p><?php echo "semestri algusest on " .$fromsemesterstartdays ." päeva möödas, ehk on läbitud " .$semesterpercent ."% semestrist"; ?></p>
   <ul>
+  <li><a href="motted.php">sisesta oma mõtteid</a></li>
+  <li><a href="motted2.php">vaata teiste mõtteid</a></li>
+  <li><a href="listfilms.php">filmide nimekiri</a></li>
+  <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
+  <li><a href="addnewuser.php">registreeri siin</a></li>
+  </ul>
   <hr>
   <?php echo $imghtml;?>
   <hr>
