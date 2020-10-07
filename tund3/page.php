@@ -1,6 +1,8 @@
 <?php
-
-$username = "Alex Nelke";
+session_start();
+require("../../../config.php");
+require("fnc_common.php");
+require("fnc_user.php");
 $fulltimenow = date("d.F.Y H:i:s");
 $hournow = date("H");
 $partofday = "lihtsalt aeg";
@@ -27,29 +29,20 @@ if($hournow >= 22){
 	$partofday = "päeva lõpp";
 }
 
-//vaatame semestri kulgemist
 $semesterstart = new DateTime("2020-8-31");
 $semesterend = new DateTime("2020-12-13");
-//selgitame välja nende vahe ehk erinevuse
 $semesterduration = $semesterstart->diff($semesterend);
-//leiame päevade arvuna
 $semesterdurationdays = $semesterduration->format("%r%a");
-//tänane päev 
 $today = new DateTime("now");
-//if($fromsemesterstartdays < 0) (semester pole peale hakanud)
 $fromsemesterstart = $semesterstart->diff($today);
 $fromsemesterstartdays = $fromsemesterstart->format("%r%a");
 $semesterpercent = $fromsemesterstartdays * 100 / $semesterdurationdays;
 
-//loeme kataloogist piltide nimekirja
 $allfiles = scandir("../vp_pics/");
 $picfiles = array_slice($allfiles, 2);
 $imghtml = "";
 $piccount = count($picfiles);
 $picnum = mt_rand(0, ($piccount - 1));
-//$i = $1 + 1;
-//$i ++;
-//for($i = 0;$i < $piccount; $i ++){}
 $imghtml .= '<img src="../vp_pics/' .$picfiles[$picnum] .'" alt="tlü">';
 
 require("header.php");
@@ -78,7 +71,6 @@ require("header.php");
   $notice = "";
   if(isset($_POST["submituserdata"])){
 	  if (!empty($_POST["emailinput"])){
-		//$email = test_input($_POST["emailinput"]);
 		$email = filter_var($_POST["emailinput"], FILTER_SANITIZE_EMAIL);
 		if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$email = filter_var($email, FILTER_VALIDATE_EMAIL);

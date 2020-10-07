@@ -1,5 +1,6 @@
 <?php
-$username = "Alex Nelke";
+//$username = "Alex Nelke";
+require("usesession.php");
 //var_dump($_POST);
 require("../../../config.php");
 $database = "if20_alex_nel_1";
@@ -32,7 +33,7 @@ require("header.php");
 ?>
 
   <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
-  <h1><?php echo $username; ?> </h1>
+  <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?> </h1>
   <hr>
   <a href="home.php">tagasi kodulehele</a>
   <hr>

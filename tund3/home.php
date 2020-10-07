@@ -1,6 +1,8 @@
 <?php
 
-$username = "Alex Nelke";
+require("usesession.php");
+
+//$username = "Alex Nelke";
 $fulltimenow = date("d.F.Y H:i:s");
 $hournow = date("H");
 $partofday = "lihtsalt aeg";
@@ -57,11 +59,13 @@ require("header.php");
 
 
   <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
-  <h1><?php echo $username; ?> </h1>
+  <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?> </h1>
+  <p><a href="?logout=1">logi välja</a></p>
   <li><a href="motted.php">sisesta oma mõtteid</a></li>
   <li><a href="motted2.php">vaata teiste mõtteid</a></li>
   <li><a href="listfilms.php">filmide nimekiri</a></li>
   <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
+  <li><a href="userprofile.php">minu profiil</a></li>
   </ul>
   <hr>
   <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>

@@ -1,5 +1,6 @@
 <?php
   $username = "Alex Nelke";
+  require("usesession.php");
   require("header.php");
   require("../../../config.php");
   require("fnc_film.php");
@@ -29,7 +30,7 @@
 ?>
 
   <img src="../img/vp_banner.png" alt="veebiprogrammeerimise kursuse banner">
-  <h1><?php echo $username; ?> </h1>
+  <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
   <hr>
   
 <ul>
