@@ -3,6 +3,7 @@
   require("../../../config.php");
   $database = "if20_alex_nel_1";
   require("fnc_common.php");
+  require("fnc_user.php");
   
   $notice = "";
   $userdescription = ""; 

@@ -117,7 +117,7 @@
   }
   
 
-  $username = "Alex Nelke";
+  #$username = "Alex Nelke";
 
   require("header.php");
 ?>

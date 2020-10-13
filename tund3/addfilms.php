@@ -1,5 +1,4 @@
 <?php
-  $username = "Alex Nelke";
   require("usesession.php");
   require("header.php");
   require("../../../config.php");
@@ -34,6 +33,7 @@
   <hr>
   
 <ul>
+  <li><a href="?logout=1">Logi välja</a>!</li>
   <li><a href="home.php">tagasi avalehele</a></li>
   
 </ul>

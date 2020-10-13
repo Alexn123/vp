@@ -1,7 +1,7 @@
 <?php
   require("usesession.php");
   require("../../../config.php");
-  $username = "Alex Nelke";
+  #$username = "Alex Nelke";
   require("header.php");
   require("fnc_film.php");
 
@@ -14,6 +14,7 @@
   <hr>
   
 <ul>
+  <li><a href="?logout=1">Logi välja</a>!</li>
   <li><a href="home.php">tagasi avalehele</a></li>
 </ul>
 <?php echo readfilms(0); ?>
