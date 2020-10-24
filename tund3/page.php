@@ -11,7 +11,7 @@ $monthnameset = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juu
 //echo $weekdaynameset[1];
 $weekdaynow = date("N");
 //vb on vaja alumist?
-$monthdaynow = date("F");
+//$monthdaynow = date("F");
 
 if($hournow < 6){
 	$partofday = "magamine";

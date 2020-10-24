@@ -6,25 +6,29 @@
   require("fnc_user.php");
   
   $notice = "";
-  $userdescription = ""; 
-  
-  if(isset($_POST["profilesubmit"])){ //andmebaasist vaatab kas on valitud värvid
-	  $description = test_input($_POST["descriptioninput"]);
-	  $result = storeuserprofile($description, $_POST["bgcolorinput"], $_POST["txtcolorinput"]);
-	  //sealt peaks tulema kas ok v error
-	  if($result == "ok") {
-		  $notice = "kasutaja on salvestatud";
-		  $_SESSION["userbgcolor"] = $_POST["bgcolorinput"];
-		  $_SESSION["usertxtcolor"] = $_POST["txtcolorinput"];
-	  } else {
-		  $notice = "profiili salvestamine ei õnnestunud";
-	  }
+  //$userdescription = ""; //edaspidi püüate andmevbaasist lugeda, kui on, kasutate seda väärtust
+  if(!empty($_POST["descriptioninput"])){
+	  $userdescription = test_input($_POST["descriptioninput"]);
+  } else {
+	  $userdescription = readuserdescription();
+  }
+    
+  if(isset($_POST["profilesubmit"])){
+	$description = test_input($_POST["descriptioninput"]);
+	$result = storeuserprofile($description, $_POST["bgcolorinput"], $_POST["txtcolorinput"]);
+	//sealt peaks tulema kas "ok" või mingi error!
+	if($result == "ok"){
+		$notice = "Kasutajaprofiil on salvestatud!";
+		$_SESSION["userbgcolor"] = $_POST["bgcolorinput"];
+		$_SESSION["usertxtcolor"] = $_POST["txtcolorinput"];
+	} else {
+		$notice = "Profiili salvestamine ei õnnestunud!";
+	}
   }
   
   require("header.php");
 ?>
 
-  <img src="../img/vp_banner.png" alt="Veebiprogrammeerimise kursuse logo">
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
   <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>Leht on loodud veebiprogrammeerimise kursuse raames <a href="http://www.tlu.ee">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>

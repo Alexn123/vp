@@ -64,7 +64,9 @@ require("header.php");
   <li><a href="motted.php">sisesta oma mõtteid</a></li>
   <li><a href="motted2.php">vaata teiste mõtteid</a></li>
   <li><a href="listfilms.php">filmide nimekiri</a></li>
+  <li><a href="addfilmrelations.php">Filmiinfo seoste lisamine</a></li>
   <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
+  	<li><a href="listfilmpersons.php">Filmitegelaste loend</a></li>
   <li><a href="userprofile.php">minu profiil</a></li>
   </ul>
   <hr>

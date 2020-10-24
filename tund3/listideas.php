@@ -1,10 +1,9 @@
 <?php
+//$username = "Alex Nelke";
 require("usesession.php");
 //var_dump($_POST);
 require("../../../config.php");
 $database = "if20_alex_nel_1";
-
-
 if(isset($_POST["ideasubmit"]) and !empty($_POST["ideainput"])){
 	//loome andmebaasiga ühenduse
 	 $conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
