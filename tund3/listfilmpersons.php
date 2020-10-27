@@ -1,7 +1,6 @@
 <?php
   require("usesession.php");
   require("../../../config.php");
-  //$database = "if20_rinde_2";
   require("fnc_filmrelations.php");
   
   $sortby = 0;

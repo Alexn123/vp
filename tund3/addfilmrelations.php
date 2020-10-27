@@ -48,7 +48,6 @@
   $filmstudioselecthtml = readstudiotoselect($selectedstudio);
   
 
-  //$username = "Andrus Rinde";
 
   require("header.php");
 ?>
@@ -61,6 +60,9 @@
     <li><a href="home.php">Avalehele</a></li>
 	<li><a href="?logout=1">Logi välja</a>!</li>
   </ul>
+  
+  
+  
   <h2>Määrame filmistuudio</h2>
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
     <?php

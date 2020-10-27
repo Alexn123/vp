@@ -66,9 +66,12 @@ require("header.php");
   <li><a href="listfilms.php">filmide nimekiri</a></li>
   <li><a href="addfilmrelations.php">Filmiinfo seoste lisamine</a></li>
   <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
-  	<li><a href="listfilmpersons.php">Filmitegelaste loend</a></li>
+  <li><a href="addgenre.php">Filmizanri lisamine</a></li>
+  <li><a href="addcompany.php">filmi stuudio lisamine</a></li>
+  <li><a href="listfilmpersons.php">Filmitegelaste loend</a></li>
   <li><a href="userprofile.php">minu profiil</a></li>
   </ul>
+  
   <hr>
   <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>
   <p><?php echo "praegu on " .$partofday ."."; ?></p>
