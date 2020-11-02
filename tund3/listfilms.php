@@ -16,8 +16,10 @@
 <ul>
   <li><a href="?logout=1">Logi välja</a>!</li>
   <li><a href="home.php">tagasi avalehele</a></li>
-</ul>
-<?php echo readfilms(0); ?>
+ </ul>
+  <?php
+    echo readfilms(0);
+  ?>
 <hr>
 </body>
 </html>

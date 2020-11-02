@@ -66,10 +66,9 @@ require("header.php");
   <li><a href="listfilms.php">filmide nimekiri</a></li>
   <li><a href="addfilmrelations.php">Filmiinfo seoste lisamine</a></li>
   <li><a href="addfilms.php">Filmiinfo lisamine</a></li>
-  <li><a href="addgenre.php">Filmizanri lisamine</a></li>
-  <li><a href="addcompany.php">filmi stuudio lisamine</a></li>
   <li><a href="listfilmpersons.php">Filmitegelaste loend</a></li>
   <li><a href="userprofile.php">minu profiil</a></li>
+  <li><a href="photoupload.php">Galeriipiltide üleslaadimine</a></li>
   </ul>
   
   <hr>
