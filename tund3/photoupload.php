@@ -1,22 +1,36 @@
 <?php
   require("usesession.php");
   require("../../../config.php");
-    
-  $inputerror = "";
+  require("fnc_photo.php");
+  require("fnc_common.php");
+  require("classes/Photoupload_class.php");
+  
+$inputerror = "";
   $notice = "";
-  $fileuploadsizelimit = 1048576;
+  $fileuploadsizelimit = 2097152;//1048576;
   $fileuploaddir_orig = "../photoupload_orig/";
   $fileuploaddir_normal = "../photoupload_normal/";
+  $fileuploaddir_thumb = "../photoupload_thumb/";
   $filename = "";
   $filenameprefix = "vp_";
   $photomaxw = 600;
   $photomaxh = 400;
+  $thumbsize = 100;
+  $privacy = 1;
+  $alttext = null;
+  $watermark = "../img/vp_logo_w100_overlay.png";
+  
   //kas vajutati salvestusnuppu
   if(isset($_POST["photosubmit"])){
-	  
+	//var_dump($_POST);
+	//var_dump($_FILES);
+	$privacy = intval($_POST["privinput"]);
+	$alttext = test_input($_POST["altinput"]);
+	
 	//kas on üldse pilt
 	$check = getimagesize($_FILES["photoinput"]["tmp_name"]);
 	if($check !== false){
+		//var_dump($check);
 		if($check["mime"] == "image/jpeg"){
 			$filetype = "jpg";
 		}
@@ -45,74 +59,69 @@
 	}
 	
 	if(empty($inputerror)){
+		//võtame kasutusele Photoupload klassi
+		$myphoto = new Photoupload($_FILES["photoinput"], $filetype);
+		
 		//teen väiksemaks
 		//loome image objekti ehk pikslikogumi
-		if($filetype == "jpg"){
-			$mytempimage = imagecreatefromjpeg($_FILES["photoinput"]["tmp_name"]);
-		}
-		if($filetype == "png"){
-			$mytempimage = imagecreatefrompng($_FILES["photoinput"]["tmp_name"]);
-		}
-		if($filetype == "gif"){
-			$mytempimage = imagecreatefromgif($_FILES["photoinput"]["tmp_name"]);
-		}
-		//pildi originaalsuurus
-		$imagew = imagesx($mytempimage);
-		$imageh = imagesy($mytempimage);
-		//kas lähtuda laiusest või kõrgusest ja leian vähendamise kordaja
-		if($imagew / $photomaxw > $imageh / $photomaxh){
-			$photosizeratio = $imagew / $photomaxw;
+
+		//muudame suurust
+		//$mynewimage = resizePhoto($mytempimage, $photomaxw, $photomaxh, true);
+		$myphoto->resizePhoto($photomaxw, $photomaxh, true);
+		$myphoto->addWatermark($watermark);
+		//salvestame vähendatud pildi faili
+		//$result = savePhotoFile($mynewimage, $filetype, $fileuploaddir_normal .$filename);
+		$result = $myphoto->savePhotoFile($fileuploaddir_normal .$filename);
+		if($result == 1){
+			$notice .= "Vähendatud pildi salvestamine õnnestus!";
 		} else {
-			$photosizeratio = $imageh / $photomaxh;
+			$inputerror .= "Vähendatud pildi salvestamisel tekkis tõrge!";
 		}
-		//arvutan uued mõõdud
-		$neww = round($imagew / $photosizeratio);
-		$newh = round($imageh / $photosizeratio);
-		//loon uue suurusega pildiobjekti
-		$mynewtempimage = imagecreatetruecolor($neww, $newh);
-		//säilitamaks png piltide läbipaistvat osa 
-		imagesavealpha($mynewtempimnage, true);
-		$transparentcolor = imagecolorallocatealpha($mynewtempimage, 0,0,0,127);
-		imagefill($mynewtempimage, 0,0, $transparentcolor);
-		
-		imagecopyresampled($mynewtempimage, $mytempimage, 0, 0, 0, 0, $neww, $newh, $imagew, $imageh);
-		
-		//vähendatud pilt faili
-		if($filetype == "jpg"){
-			if(imagejpeg($mynewtempimage, $fileuploaddir_normal .$filename, 90)){
-				$notice = "Vähendatud pildi salvestamine õnnestus!";
-			} else {
-				$notice = "Vähendatud pildi salvestamine ebaõnnestus!";
-			}
-		}
-		if($filetype == "png"){
-			if(imagepng($mynewtempimage, $fileuploaddir_normal .$filename, 6)){
-				$notice = "Vähendatud pildi salvestamine õnnestus!";
-			} else {
-				$notice = "Vähendatud pildi salvestamine ebaõnnestus!";
-			}
-		}
-		if($filetype == "gif"){
-			if(imagegif($mynewtempimage, $fileuploaddir_normal .$filename)){
-				$notice = "Vähendatud pildi salvestamine õnnestus!";
-			} else {
-				$notice = "Vähendatud pildi salvestamine ebaõnnestus!";
-			}
-		}
-		imagedestroy($mynewtempimage);
-		imagedestroy($mytempimage);
-		
-		if(move_uploaded_file($_FILES["photoinput"]["tmp_name"], $fileuploaddir_orig .$filename)){
-			$notice .= " Originaalpildi üleslaadimine õnnestus!";
+				
+		//pisipilt
+		//$mynewimage = resizePhoto($mytempimage, $thumbsize, $thumbsize);
+		$myphoto->resizePhoto($thumbsize, $thumbsize);
+		//$result = savePhotoFile($mynewimage, $filetype, $fileuploaddir_thumb .$filename);
+		$result = $myphoto->savePhotoFile($fileuploaddir_thumb .$filename);
+		if($result == 1){
+			$notice .= " Pisipildi salvestamine õnnestus!";
 		} else {
-			$notice .= "Originaalpildi üleslaadimisel tekkis viga!";
+			$inputerror .= "Pisipildi salvestamisel tekkis tõrge!";
 		}
+		
+		//kui vigu pole, salvestame originaalpildi
+		if(empty($inputerror)){
+			$result = $myphoto->saveOriginalPhoto($fileuploaddir_orig .$filename);
+			if($result == 1){
+				$notice .= " Originaalpildi salvestamine õnnestus!";
+			} else {
+				$inputerror .= " Originaalpildi salvestamisel tekkis viga!";
+			}
+		}
+		
+		//kui vigu pole, salvestame info andmebaasi
+		if(empty($inputerror)){
+			$result = storePhotoData($filename, $alttext, $privacy);
+			if($result == 1){
+				$notice .= " Pildi info lisati andmebaasi!";
+				$privacy = 1;
+				$alttext = null;
+			} else {
+				$inputerror .= " Pildi info andmebaasi salvestamisel tekkis tõrge!";
+			}
+		} else {
+			$inputerror .= " Tekkinud vigade tõttu pildi andmeid ei salvestatud!";
+		}
+		
+		unset($myphoto);
 	}
   }
   
   require("header.php");
 ?>
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
+  <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
+  <p>Leht on loodud veebiprogrammeerimise kursuse raames <a href="http://www.tlu.ee">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
   <ul>
    <li><a href="home.php">Avalehele</a></li>
    <li><a href="?logout=1">Logi välja</a>!</li>
@@ -123,15 +132,15 @@
 	<input id="photoinput" name="photoinput" type="file" required>
 	<br>
 	<label for="altinput">Lisa pildi lühikirjeldus (alternatiivtekst)</label>
-	<input id="altinput" name="altinput" type="text" placeholder="Pildi lühikirjeldus ...">
+	<input id="altinput" name="altinput" type="text" placeholder="Pildi lühikirjeldus ..." value="<?php echo $alttext; ?>">
 	<br>
 	<label>Määra privaatsustase</label>
 	<br>
-	<input id="privinput1" name="privinput" type="radio" value="1">
+	<input id="privinput1" name="privinput" type="radio" value="1" <?php if($privacy == 1){echo " checked";} ?>>
 	<label for="privinput1">Privaatne (ise näed)</label>
-	<input id="privinput2" name="privinput" type="radio" value="2">
+	<input id="privinput2" name="privinput" type="radio" value="2" <?php if($privacy == 2){echo " checked";} ?>>
 	<label for="privinput2">Sisseloginud kasutajatele</label>
-	<input id="privinput3" name="privinput" type="radio" value="3">
+	<input id="privinput3" name="privinput" type="radio" value="3" <?php if($privacy == 3){echo " checked";} ?>>
 	<label for="privinput3">Avalik</label>
 	
 	<br>
