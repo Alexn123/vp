@@ -2,6 +2,12 @@
 
 require("usesession.php");
 
+//tegeleme küpsistega(cookie)
+//setcookie peab olema enne html algust
+//määrame: nimi, väärtus, aegumine, veebikataloog (vaikimisi "/"), domeen, kas https, http only ehk ainult üle veebi
+setcookie("vpvisitor", $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"], time() + (86400 * 8), "/~alexnel/", "greeny.cs.tlu.ee", isset($_SERVER["HTTPS"]), true);
+//kustutamiseks antakse aegumistähtaeg minevikus, 
+
 //$username = "Alex Nelke";
 $fulltimenow = date("d.F.Y H:i:s");
 $hournow = date("H");
@@ -54,6 +60,7 @@ $picnum = mt_rand(0, ($piccount - 1));
 //for($i = 0;$i < $piccount; $i ++){}
 $imghtml .= '<img src="../vp_pics/' .$picfiles[$picnum] .'" alt="tlü">';
 
+
 require("header.php");
 ?>
 
@@ -69,9 +76,22 @@ require("header.php");
   <li><a href="listfilmpersons.php">Filmitegelaste loend</a></li>
   <li><a href="userprofile.php">minu profiil</a></li>
   <li><a href="photoupload.php">Galeriipiltide üleslaadimine</a></li>
+  <li><a href="photogallery_public.php">Galeriipiltide vaatamine</a></li>
   </ul>
   
   <hr>
+  <?php
+	if(count($_COOKIE) > 0){
+		echo "<p>Küpsised on lubatud! Leidsin: " .count($_COOKIE) ." küpsist.</p> \n";
+	} else {
+		echo "<p>Küpsised pole lubatud!</p> \n";
+	}
+	if(isset($_COOKIE["vpvisitor"])){
+		echo "<p>Küpsisest selgus viimase külastaja nimi: " .$_COOKIE["vpvisitor"] .". \n";
+	} else {
+		echo "<p>Viimase kasutaja nime ei leitud!</p> \n";
+	}
+  ?>
   <p>Lehe avamisel oli aeg: <?php echo $weekdaynameset[$weekdaynow -1 ] .", " .$fulltimenow; ?> </p>
   <p><?php echo "praegu on " .$partofday ."."; ?></p>
   <p><?php echo "semestri algusest on " .$fromsemesterstartdays ." päeva möödas, ehk on läbitud " .$semesterpercent ."% semestrist"; ?></p>

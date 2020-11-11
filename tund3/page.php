@@ -1,5 +1,10 @@
 <?php
-session_start();
+//session_start();
+
+  require("classes/SessionManager.class.php");
+  //sessioonihaldus
+  SessionManager::sessionStart("vp", 0, "/~alexnel/", "greeny.cs.tlu.ee");
+  
 require("../../../config.php");
 require("fnc_common.php");
 require("fnc_user.php");

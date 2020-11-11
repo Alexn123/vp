@@ -4,8 +4,8 @@
   require("fnc_photo.php");
   require("fnc_common.php");
   require("classes/Photoupload_class.php");
-  
-$inputerror = "";
+    
+  $inputerror = "";
   $notice = "";
   $fileuploadsizelimit = 2097152;//1048576;
   $fileuploaddir_orig = "../photoupload_orig/";
