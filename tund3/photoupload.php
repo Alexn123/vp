@@ -1,33 +1,36 @@
 <?php
   require("usesession.php");
+
   require("../../../config.php");
   require("fnc_photo.php");
   require("fnc_common.php");
   require("classes/Photoupload_class.php");
+  
+  $tolink = '<script src="javascript/checkfilesize.js" defer></script>' ."\n";
     
   $inputerror = "";
-  $notice = "";
-  $fileuploadsizelimit = 2097152;//1048576;
-  $fileuploaddir_orig = "../photoupload_orig/";
-  $fileuploaddir_normal = "../photoupload_normal/";
-  $fileuploaddir_thumb = "../photoupload_thumb/";
-  $filename = "";
+  $notice = null;
+  $filetype = null;
+  $filesizelimit = 2097152;//1048576;
+  $photouploaddir_orig = "../photoupload_orig/";
+  $photouploaddir_normal = "../photoupload_normal/";
+  $photouploaddir_thumb = "../photoupload_thumb/";
+  $watermark = "../img/vp_logo_w100_overlay.png";
   $filenameprefix = "vp_";
-  $photomaxw = 600;
-  $photomaxh = 400;
+  $filename = null;
+  $photomaxwidth = 600;
+  $photomaxheight = 400;
   $thumbsize = 100;
   $privacy = 1;
   $alttext = null;
-  $watermark = "../img/vp_logo_w100_overlay.png";
-  
-  //kas vajutati salvestusnuppu
+    
+  //kui klikiti submit, siis ...
   if(isset($_POST["photosubmit"])){
-	//var_dump($_POST);
-	//var_dump($_FILES);
 	$privacy = intval($_POST["privinput"]);
 	$alttext = test_input($_POST["altinput"]);
-	
-	//kas on üldse pilt
+	//var_dump($_POST);
+	//var_dump($_FILES);
+	//kas on pilt ja mis tüüpi
 	$check = getimagesize($_FILES["photoinput"]["tmp_name"]);
 	if($check !== false){
 		//var_dump($check);
@@ -41,65 +44,60 @@
 			$filetype = "gif";
 		}
 	} else {
-		$inputerror = "Valitud fail ei ole pilt!";
+		$inputerror = "Valitud fail ei ole pilt! ";
 	}
 	
-	//ega pole liiga suur fail
-	if($_FILES["photoinput"]["size"] > $fileuploadsizelimit){
-		$inputerror .= " Valitud fail on liiga suur!";
+	//kas on sobiva failisuurusega
+	if(empty($inputerror) and $_FILES["photoinput"]["size"] > $filesizelimit){
+		$inputerror = "Liiga suur fail!";
 	}
 	
-	//genereerime failinime
+	//loome uue failinime
 	$timestamp = microtime(1) * 10000;
 	$filename = $filenameprefix .$timestamp ."." .$filetype;
 	
-	//kas fail on olemas
-	if(file_exists($fileuploaddir_orig .$filename)){
-		$inputerror .= " Sellise nimega fail on juba olemas!";
+	//ega fail äkki olemas pole
+	if(file_exists($photouploaddir_orig .$filename)){
+		$inputerror = "Selle nimega fail on juba olemas!";
 	}
 	
+	//kui vigu pole ...
 	if(empty($inputerror)){
-		//võtame kasutusele Photoupload klassi
-		$myphoto = new Photoupload($_FILES["photoinput"], $filetype);
 		
-		//teen väiksemaks
-		//loome image objekti ehk pikslikogumi
-
-		//muudame suurust
-		//$mynewimage = resizePhoto($mytempimage, $photomaxw, $photomaxh, true);
-		$myphoto->resizePhoto($photomaxw, $photomaxh, true);
+		//võtame kasutusele klassi
+		$myphoto = new Photoupload($_FILES["photoinput"], $filetype);
+		//teeme pildi väiksemaks
+		$myphoto->resizePhoto($photomaxwidth, $photomaxheight, true);
+		//lisame vesimärgi
 		$myphoto->addWatermark($watermark);
-		//salvestame vähendatud pildi faili
-		//$result = savePhotoFile($mynewimage, $filetype, $fileuploaddir_normal .$filename);
-		$result = $myphoto->savePhotoFile($fileuploaddir_normal .$filename);
+		//salvestame vähendatud pildi
+		$result = $myphoto->saveimage($photouploaddir_normal .$filename);
 		if($result == 1){
-			$notice .= "Vähendatud pildi salvestamine õnnestus!";
+			$notice .= " Vähendatud pildi salvestamine õnnestus!";
 		} else {
-			$inputerror .= "Vähendatud pildi salvestamisel tekkis tõrge!";
+			$inputerror .= " Vähendatud pildi salvestamisel tekkis tõrge!";
 		}
-				
-		//pisipilt
-		//$mynewimage = resizePhoto($mytempimage, $thumbsize, $thumbsize);
+		
+		//teeme pisipildi
 		$myphoto->resizePhoto($thumbsize, $thumbsize);
-		//$result = savePhotoFile($mynewimage, $filetype, $fileuploaddir_thumb .$filename);
-		$result = $myphoto->savePhotoFile($fileuploaddir_thumb .$filename);
+		$result = $myphoto->saveimage($photouploaddir_thumb .$filename);
 		if($result == 1){
 			$notice .= " Pisipildi salvestamine õnnestus!";
 		} else {
 			$inputerror .= "Pisipildi salvestamisel tekkis tõrge!";
 		}
+		//eemaldan klassi
+		unset($myphoto);
 		
-		//kui vigu pole, salvestame originaalpildi
+		//salvestame originaalpildi
 		if(empty($inputerror)){
-			$result = $myphoto->saveOriginalPhoto($fileuploaddir_orig .$filename);
-			if($result == 1){
-				$notice .= " Originaalpildi salvestamine õnnestus!";
+			if(move_uploaded_file($_FILES["photoinput"]["tmp_name"], $photouploaddir_orig .$filename)){
+				$notice .= " Originaalfaili üleslaadimine õnnestus!";
 			} else {
-				$inputerror .= " Originaalpildi salvestamisel tekkis viga!";
+				$inputerror .= " Originaalfaili üleslaadimisel tekkis tõrge!";
 			}
 		}
 		
-		//kui vigu pole, salvestame info andmebaasi
 		if(empty($inputerror)){
 			$result = storePhotoData($filename, $alttext, $privacy);
 			if($result == 1){
@@ -107,52 +105,53 @@
 				$privacy = 1;
 				$alttext = null;
 			} else {
-				$inputerror .= " Pildi info andmebaasi salvestamisel tekkis tõrge!";
+				$inputerror .= "Pildi info andmebaasi salvestamisel tekkis tõrge!";
 			}
 		} else {
 			$inputerror .= " Tekkinud vigade tõttu pildi andmeid ei salvestatud!";
 		}
 		
-		unset($myphoto);
 	}
   }
   
+
   require("header.php");
 ?>
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
-  <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
-  <p>Leht on loodud veebiprogrammeerimise kursuse raames <a href="http://www.tlu.ee">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
+  <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
+  <p>See konkreetne leht on loodud veebiprogrammeerimise kursusel aasta 2020 sügissemestril <a href="https://www.tlu.ee">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
+  
   <ul>
-   <li><a href="home.php">Avalehele</a></li>
-   <li><a href="?logout=1">Logi välja</a>!</li>
+    <li><a href="?logout=1">Logi välja</a>!</li>
+    <li><a href="home.php">Avaleht</a></li>
   </ul>
+  
   <hr>
+  
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">
     <label for="photoinput">Vali pildifail!</label>
 	<input id="photoinput" name="photoinput" type="file" required>
 	<br>
 	<label for="altinput">Lisa pildi lühikirjeldus (alternatiivtekst)</label>
-	<input id="altinput" name="altinput" type="text" placeholder="Pildi lühikirjeldus ..." value="<?php echo $alttext; ?>">
+	<input id="altinput" name="altinput" type="text" value="<?php echo $alttext; ?>">
 	<br>
-	<label>Määra privaatsustase</label>
+	<label>Privaatsustase</label>
 	<br>
 	<input id="privinput1" name="privinput" type="radio" value="1" <?php if($privacy == 1){echo " checked";} ?>>
-	<label for="privinput1">Privaatne (ise näed)</label>
+	<label for="privinput1">Privaatne (ainult ise näen)</label>
 	<input id="privinput2" name="privinput" type="radio" value="2" <?php if($privacy == 2){echo " checked";} ?>>
-	<label for="privinput2">Sisseloginud kasutajatele</label>
+	<label for="privinput2">Klubi liikmetele (sisseloginud kasutajad näevad)</label>
 	<input id="privinput3" name="privinput" type="radio" value="3" <?php if($privacy == 3){echo " checked";} ?>>
-	<label for="privinput3">Avalik</label>
-	
-	<br>
-	<input type="submit" name="photosubmit" value="Lae pilt üles">
+	<label for="privinput3">Avalik (kõik näevad)</label>
+	<br>	
+	<input type="submit" id="photosubmit" name="photosubmit" value="Lae foto üles">
   </form>
-  <p>
+  <p id="notice">
   <?php
 	echo $inputerror;
 	echo $notice;
   ?>
-	</p>
+  </p>
   
-  <hr>  
 </body>
 </html>
