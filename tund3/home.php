@@ -77,6 +77,7 @@ require("header.php");
   <li><a href="userprofile.php">minu profiil</a></li>
   <li><a href="photoupload.php">Galeriipiltide üleslaadimine</a></li>
   <li><a href="photogallery_public.php">Galeriipiltide vaatamine</a></li>
+  <li><a href="addnews.php">Uudise lisamine</a></li>
   </ul>
   
   <hr>

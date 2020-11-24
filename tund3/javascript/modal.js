@@ -1,4 +1,4 @@
-let modal;
+llet modal;
 let modalimg;
 let captiontext;
 let photoid;
@@ -13,6 +13,7 @@ window.onload = function(){
 		allThumbs[i].addEventListener("click", openModal);
 	}
 	document.getElementById("modalclose").addEventListener("click", closeModal);
+	modalimg.addEventListener("click", closeModal);
 	document.getElementById("storeRating").addEventListener("click", storeRating);
 }
 
@@ -22,7 +23,7 @@ function openModal(e){
 		document.getElementById("rate" + i).checked = false;
 	}
 	//modalimg.src = photodir + e.target.dataset.fn;
-	modalimg.src = "showphoto.php?photo=" + e.target.dataset.fn;
+	modalimg.src = "showphoto.php?photo=" + e.target.dataset.id;
 	
 	photoid = e.target.dataset.id;
 	modalimg.alt = e.target.alt;
@@ -32,6 +33,7 @@ function openModal(e){
 
 function closeModal(){
 	modal.style.display = "none";
+	modalimg.src = "../img/empty.png";
 }
 
 function storeRating(){
@@ -48,6 +50,7 @@ function storeRating(){
 			if(this.readyState == 4 && this.status == 200){
 				//nüüd see, mis õnnestumise korral tehakse
 				document.getElementById("avgRating").innerHTML = "Keskmine hinne: " + this.responseText;
+				document.getElementById("score" + photoid).innerHTML = "Hinne: " + this.responseText;
 			}
 		};
 		webrequest.open("GET", "storePhotoRating.php?rating=" + rating + "&photoid=" + photoid, true);
